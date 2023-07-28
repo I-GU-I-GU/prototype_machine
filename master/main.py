@@ -41,7 +41,6 @@ prox3_pin = Pin(12,Pin.IN)
 prox4_pin = Pin(13,Pin.IN)
 prox5_pin = Pin(8,Pin.IN)##
 prox6_pin = Pin(9,Pin.IN)##
-remote_pin = Pin(29,Pin.IN)
 
 roller_limit_pin = Pin(14,Pin.IN)
 front_and_back_limit_pin = Pin(15,Pin.IN,Pin.PULL_UP)
@@ -50,7 +49,7 @@ printer_limit_pin = Pin(22,Pin.IN)
 tube_drop_pin = Pin(6,Pin.IN)
 sticker_detect_pin = Pin(7,Pin.IN)
 
-lock_solenoid_pin = Pin(27,Pin.OUT)
+lock_solenoid_pin = Pin(29,Pin.OUT)
 drop_solenoid_pin = Pin(28,Pin.OUT)
 rolling_solenoid_pin = Pin(26,Pin.OUT)
 
@@ -237,7 +236,6 @@ move_origin_state = 0
 clear_tube_flag = False
 clear_tube_timer = 0
 clear_tube_state = 0
-runnig_machine = False
 
 while True:
     # get proximeter sensors
@@ -248,14 +246,6 @@ while True:
     # print(main_state)
     # time.sleep(0.1)
     # time.sleep(0.2)
-    if runnig_machine == True:
-        if remote_pin.value() == 0:
-            on_solenoid1()
-            on_solenoid3()
-        if remote_pin.value() == 1:
-            off_solenoid1()
-            off_solenoid3()
-
     if tube_drop_pin.value() == 0: ##หลอดตกขาที่ 6 มีค่าเป็น0
         tube_drop_status = True  ###กำหนดส่งflagว่าหลอดตก
 
@@ -272,11 +262,9 @@ while True:
             if front_and_back_limit_pin.value() == 0:
                 move_origin_state = 100
                 move_origin = False
-                runnig_machine = True
                 Off_sliding()
                 sliding_motor.active(0)
             else:
-                runnig_machine = False
                 On_sliding()
                 move_origin_state = 200
                 set_sliding_backward()
@@ -350,7 +338,6 @@ while True:
         if clear_tube_state == 0:
             clear_tube_timer = time.ticks_ms()
             clear_tube_state = 10
-            runnig_machine = False
         elif clear_tube_state == 1:
             if time.ticks_ms() - clear_tube_timer >= 100:
                 On_sliding()
@@ -380,7 +367,7 @@ while True:
                 # off_solenoid3()
                 clear_tube_timer = time.ticks_ms()
         elif clear_tube_state == 4:
-            if time.ticks_ms() - clear_tube_timer >= 300:
+            if time.ticks_ms() - clear_tube_timer >= 800:
                 clear_tube_state = 5
                 off_solenoid1()
                 off_solenoid3()
@@ -408,7 +395,6 @@ while True:
                 Off_sliding()
                 set_sliding_backward()
                 clear_tube_state = 8
-                runnig_machine = True
                 clear_tube_flag = False
 
         elif clear_tube_state == 10:
@@ -594,7 +580,6 @@ while True:
             sticker_detect_status = True
         try:
             if main_state == 0:
-                runnig_machine = False
                 set_sliding_forward()
                 main_state_timer = time.ticks_ms()
                 printer_retry = 0
@@ -973,7 +958,6 @@ while True:
                 device_resp_message = ""
             elif main_state == 45:#41:
                 Off_sliding()
-                runnig_machine = False
                 pass
             
             elif main_state == 60:
@@ -1025,7 +1009,6 @@ while True:
         except:
             Off_sliding()
             main_state = 207
-            runnig_machine = True
         # ============= error states =========
         #main_state == 200:             # printer module not response
         #main_state == 201:             # sliding box position is not origin
@@ -1041,6 +1024,7 @@ while True:
             #pc_response(str(main_state))
             pass
                                     
+
 
 
 
