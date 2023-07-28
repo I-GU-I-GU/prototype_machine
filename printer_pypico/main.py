@@ -83,7 +83,7 @@ paper_test_flag = True
 motor_state = 0
 motor_timer = 0
 # ========= assigned direction pin ===========
-paper_switch_pull = Pin(22,Pin.IN,Pin.PULL_UP)
+paper_switch_pull = Pin(28,Pin.IN,Pin.PULL_UP)
 paper_switch_eject = Pin(26,Pin.IN,Pin.PULL_UP)
 duo_switch = Pin(20,Pin.IN,Pin.PULL_UP)
 slap_switch = Pin(27,Pin.IN,Pin.PULL_UP)
@@ -108,7 +108,7 @@ debugging_state = 0
 device_link = UART(0, baudrate=9600, bits=8, parity=None, stop=1,tx=Pin(0), rx=Pin(1),timeout=1000)
 device_link.read()                                                                     # clear data in serial port buffer
 
-motor1_controller = rp2.StateMachine(0, run_motor1, freq=2600000, set_base=Pin(15))      # old === GPIO13 => pulse, GPIO12 => direction //roller
+motor1_controller = rp2.StateMachine(0, run_motor1, freq=2500000, set_base=Pin(15))      # old === GPIO13 => pulse, GPIO12 => direction //roller
 motor2_controller = rp2.StateMachine(1, run_motor2, freq=1200000, set_base=Pin(13))      # old === GPIO15 => pulse, GPIO14 => direction //slab
 #========== sub functions ==========
     
@@ -333,7 +333,7 @@ while True:
             motor1_controller.active(0)
             motor2_controller.active(0)
         else:
-            if duo_switch.value() == 1:
+            if duo_switch.value() == 1 or time.ticks_ms() - printer_state_timer >= 2500:
                 print("state 4")
                 printer_state = 44
                 printer_state_timer = time.ticks_ms()
