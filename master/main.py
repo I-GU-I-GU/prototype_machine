@@ -49,7 +49,7 @@ printer_limit_pin = Pin(22,Pin.IN)
 tube_drop_pin = Pin(6,Pin.IN)
 sticker_detect_pin = Pin(7,Pin.IN)
 
-lock_solenoid_pin = Pin(29,Pin.OUT)
+lock_solenoid_pin = Pin(27,Pin.OUT)
 drop_solenoid_pin = Pin(28,Pin.OUT)
 rolling_solenoid_pin = Pin(26,Pin.OUT)
 
@@ -367,7 +367,7 @@ while True:
                 # off_solenoid3()
                 clear_tube_timer = time.ticks_ms()
         elif clear_tube_state == 4:
-            if time.ticks_ms() - clear_tube_timer >= 800:
+            if time.ticks_ms() - clear_tube_timer >= 300:
                 clear_tube_state = 5
                 off_solenoid1()
                 off_solenoid3()
@@ -1024,7 +1024,6 @@ while True:
             #pc_response(str(main_state))
             pass
                                     
-
 
 
 
