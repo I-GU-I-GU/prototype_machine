@@ -49,7 +49,7 @@ printer_limit_pin = Pin(22,Pin.IN)
 tube_drop_pin = Pin(6,Pin.IN)
 sticker_detect_pin = Pin(7,Pin.IN)
 
-lock_solenoid_pin = Pin(27,Pin.OUT)
+lock_solenoid_pin = Pin(29,Pin.OUT)
 drop_solenoid_pin = Pin(28,Pin.OUT)
 rolling_solenoid_pin = Pin(26,Pin.OUT)
 
@@ -248,11 +248,13 @@ while True:
     # time.sleep(0.2)
     if tube_drop_pin.value() == 0: ##หลอดตกขาที่ 6 มีค่าเป็น0
         tube_drop_status = True  ###กำหนดส่งflagว่าหลอดตก
-        
+
     if sticker_detect_pin.value() == 1:
         sticker_detect_status = True
+        
     if sticker_detect_pin.value() == 0:
-        sticker_detect_status = False                                
+        sticker_detect_status = False
+
     if wait_slave2pc and resp_flag: ###กำหนด wait และ resp เป็น false
         resp_flag = False
         wait_slave2pc = False
@@ -730,18 +732,19 @@ while True:
                     on_solenoid2()
                     main_state_timer = time.ticks_ms()
                     main_state = 18
-                elif sticker_detect_status == False:
-                    main_state = 181
+                else:
                     on_solenoid2()
+                    main_state = 181
             elif main_state == 18:
                 if time.ticks_ms()-main_state_timer >=1000: #500
-                    off_solenoid2()                                                                                                                                                      
-                    off_solenoid1()                                                                      
+                    off_solenoid2()
+                    off_solenoid1()
                     main_state = 19
-            elif main_state = 181:
-                off_solenoid1()
-                off_solenoid2()
-                main_state = 19                                   
+            elif main_state == 181:
+                if time.ticks_ms() - main_state_timer >= 20:
+                    off_solenoid2()
+                    off_solenoid1()
+                    main_state = 19
             elif main_state == 19:
                 sliding_motor.active(1)
                 if present_silo == 1:

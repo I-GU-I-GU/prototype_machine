@@ -83,7 +83,7 @@ paper_test_flag = True
 motor_state = 0
 motor_timer = 0
 # ========= assigned direction pin ===========
-paper_switch_pull = Pin(28,Pin.IN,Pin.PULL_UP)
+paper_switch_pull = Pin(22,Pin.IN,Pin.PULL_UP)
 paper_switch_eject = Pin(26,Pin.IN,Pin.PULL_UP)
 duo_switch = Pin(20,Pin.IN,Pin.PULL_UP)
 slap_switch = Pin(27,Pin.IN,Pin.PULL_UP)
