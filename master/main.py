@@ -248,7 +248,11 @@ while True:
     # time.sleep(0.2)
     if tube_drop_pin.value() == 0: ##หลอดตกขาที่ 6 มีค่าเป็น0
         tube_drop_status = True  ###กำหนดส่งflagว่าหลอดตก
-
+        
+    if sticker_detect_pin.value() == 1:
+        sticker_detect_status = True
+    if sticker_detect_pin.value() == 0:
+        sticker_detect_status = False                                
     if wait_slave2pc and resp_flag: ###กำหนด wait และ resp เป็น false
         resp_flag = False
         wait_slave2pc = False
@@ -722,17 +726,22 @@ while True:
                     off_solenoid1()
                     main_state = 17
             elif main_state == 17:
-                if sticker_detect_status:
+                if sticker_detect_status == True:
                     on_solenoid2()
                     main_state_timer = time.ticks_ms()
                     main_state = 18
-                else:
-                    main_state = 19
+                elif sticker_detect_status == False:
+                    main_state = 181
+                    on_solenoid2()
             elif main_state == 18:
-                if time.ticks_ms()-main_state_timer >=300: #500
-                    off_solenoid2()
-                    off_solenoid1()
+                if time.ticks_ms()-main_state_timer >=1000: #500
+                    off_solenoid2()                                                                                                                                                      
+                    off_solenoid1()                                                                      
                     main_state = 19
+            elif main_state = 181:
+                off_solenoid1()
+                off_solenoid2()
+                main_state = 19                                   
             elif main_state == 19:
                 sliding_motor.active(1)
                 if present_silo == 1:
